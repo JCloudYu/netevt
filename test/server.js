@@ -19,7 +19,7 @@
 		console.log( `Client (${client.id}) has disconnected!` );
 	})
 	.on('data', (e)=>{
-		const {sender:client, rawData} = e.sender;
+		const {sender:client, rawData} = e;
 		let parsed = JSON.parse(rawData.toString());
 		console.log(`Receiving data from client (${client.id})`);
 		console.log(parsed);
@@ -31,7 +31,7 @@
 		}));
 	})
 	.on('client-event', (e)=>{
-		const {type, sender:client, rawData} = e.sender;
+		const {type, sender:client, rawData} = e;
 		console.log(`Receiving event: ${type} from ${client.id}: ${rawData.toString()}`);
 		
     	client.triggerEvent( "server-event", rawData );
