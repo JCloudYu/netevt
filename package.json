@@ -1,0 +1,26 @@
+{
+	"name": "netevt",
+	"version": "0.1.1",
+	"description": "A tiny bust fast library for tcp based network event system",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/JCloudYu/netevt.git"
+	},
+	"keywords": [
+		"EventEmitter",
+		"Network"
+	],
+	"author": "JCloudYu",
+	"license": "WTFPL",
+	"bugs": {
+		"url": "https://github.com/JCloudYu/netevt/issues"
+	},
+	"homepage": "https://github.com/JCloudYu/netevt#readme",
+	"dependencies": {
+		"jsboost": "^0.1.8"
+	}
+}
