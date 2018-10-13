@@ -5,11 +5,12 @@
 (()=>{
 	"use strict";
 	
+	const {UniqueTimeout} = require( './_lib' );
 	const {Socket} = require( 'net' );
 	const {EventEmitter} = require( 'jsboost/native/event-emitter' );
 	
-	
-	
+	const _DATA_PROCESS_LOOP = 15;
+	const _DATA_TIMEOUT = UniqueTimeout();
 	const _WEAK_REL = new WeakMap();
 	class NetEvtSocket extends EventEmitter {
 		constructor(socket=null, serverInst=null) {
@@ -117,19 +118,34 @@
 	function ___HANDLE_DATA(chunk) {
 		const _PRIVATES = _WEAK_REL.get(this);
 		_PRIVATES._chunk = Buffer.concat([_PRIVATES._chunk, chunk]);
+		_DATA_TIMEOUT(___PROCESS_MESSAGE.bind(this), 0, _PRIVATES);
+	}
+	function ___PROCESS_MESSAGE(PRIVATES) {
+		let repeat	 = _DATA_PROCESS_LOOP;
+		let messages = [];
+		let result	 = false;
+		while ( repeat-- > 0 ) {
+			result	= ___EAT_MESSAGE(PRIVATES._chunk);
+			if ( !result ) break;
+			
+			let {event, raw, anchor} = result;
+			PRIVATES._chunk = PRIVATES._chunk.slice(anchor);
+			messages.push({event, raw});
+		}
+	
+		// Emit message
+		for (let msg of messages) {
+			this.emit( msg.event, { type:msg.event, sender:this, rawData:msg.raw });
+			if ( PRIVATES._parent ) {
+				PRIVATES._parent.emit( msg.event, { type:msg.event, sender:this, rawData:msg.raw });
+			}
+		}
 		
-		let result = ___EAT_MESSAGE(chunk);
-		if ( !result ) return;
-		
-		let {event, raw:rawData, anchor} = result;
-		_PRIVATES._chunk = _PRIVATES._chunk.slice(anchor);
-		
-		this.emit( event, { type:event, sender:this, rawData });
-		if ( _PRIVATES._parent ) {
-			_PRIVATES._parent.emit( event, {type:event, sender:this, rawData} );
+		// Hook next processing loop if there's still remaining data
+		if ( PRIVATES._chunk.length > 0 && result ) {
+			_DATA_TIMEOUT(___PROCESS_MESSAGE.bind(this), 0, PRIVATES);
 		}
 	}
-	
 	function ___EAT_MESSAGE(chunk) {
 		if ( chunk.length <= 0 ) {
 			return false;

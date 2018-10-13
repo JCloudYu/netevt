@@ -32,7 +32,8 @@
 	})
 	.on('client-event', (e)=>{
 		const {type, sender:client, rawData} = e;
-		console.log(`Receiving event: ${type} from ${client.id}: ${rawData.toString()}`);
+		let data = rawData.toString();
+		console.log(`Receiving event: ${type} from ${client.id}: ${data} (${data.length})`);
 		
     	client.triggerEvent( "server-event", rawData );
 	})

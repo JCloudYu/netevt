@@ -5,13 +5,16 @@
 (()=>{
 	"use strict";
 	
+	const crypto = require( 'crypto' );
 	const {NetEvtClient} = require( '../index' );
 	const clientInst = new NetEvtClient();
 	
 	clientInst
 	.on( 'connected', (e)=>{
 		console.log( "Connected to server!" );
-    	e.sender.triggerEvent( "client-event", "asdfasdfasdf" );
+		let data = crypto.randomBytes(((Math.random()*1526)|0) + 512).toString('hex');
+		console.log(`Sending data with ${data.length} bytes to server`);
+		e.sender.triggerEvent( "client-event", data );
 	})
 	.on( 'disconnected', (e)=>{
 		console.log( `Disconnected from server!` );
