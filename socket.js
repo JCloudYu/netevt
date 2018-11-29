@@ -9,6 +9,7 @@
 	const {Socket} = require( 'net' );
 	const {EventEmitter} = require( 'jsboost/native/event-emitter' );
 	
+	const _NO_DATA = new ArrayBuffer(0);
 	const _DATA_PROCESS_LOOP = 15;
 	const _DATA_TIMEOUT = UniqueTimeout();
 	const _WEAK_REL = new WeakMap();
@@ -39,7 +40,7 @@
 			header.writeUInt32LE(buffer.length, 1);
 			_socket.write(Buffer.concat([header, buffer]));
 		}
-		triggerEvent(event, data) {
+		triggerEvent(event, data=_NO_DATA) {
 			const {_socket} = _WEAK_REL.get(this);
 			const eventBuffer = Buffer.from(event);
 			const eventHeader = Buffer.alloc(2);
