@@ -5,7 +5,7 @@
 (()=>{
 	"use strict";
 	
-	const {NetEvtServer} = require('../index');
+	const {NetEvtServer} = require('../../index');
 	
 	(new NetEvtServer())
 	.on('connected', (e)=>{

@@ -18,6 +18,9 @@
 			.on( 'connection', ___HANDLE_CONNECTION.bind(this) )
 			.on( 'close', ___HANDLE_CLOSE.bind(this) )
 			.on( 'error', ___HANDLE_ERROR.bind(this) );
+			
+			this._serializer = null;
+			this._deserializer = null;
 		}
 		listen(...args) {
 			this.server.listen(...args);
@@ -30,6 +33,9 @@
 	
 	function ___HANDLE_CONNECTION(socket) {
 		let netSock = new NetEvtSocket(socket, this);
+		netSock._serializer	  = this._serializer;
+		netSock._deserializer = this._deserializer;
+		
 		this.emit( 'connected', {type:'connected', sender:netSock});
 	}
 	function ___HANDLE_CLOSE() {

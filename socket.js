@@ -31,26 +31,40 @@
 			.on( 'close', ___HANDLE_CLOSE.bind(this) )
 			.on( 'error', ___HANDLE_ERROR.bind(this) )
 			.on( 'data', ___HANDLE_DATA.bind(this) );
+			
+			this._serializer = null;
+			this._deserializer = null;
 		}
 		sendData(data) {
 			const {_socket} = _WEAK_REL.get(this);
+			if ( this._serializer ) {
+				data = this._serializer(data);
+			}
+			
 			const buffer = Buffer.from(data);
 			const header = Buffer.alloc(1 + 4);
 			header[0] = 0;
 			header.writeUInt32LE(buffer.length, 1);
 			_socket.write(Buffer.concat([header, buffer]));
 		}
-		triggerEvent(event, data=_NO_DATA) {
+		triggerEvent(event, data=null) {
 			const {_socket} = _WEAK_REL.get(this);
 			const eventBuffer = Buffer.from(event);
 			const eventHeader = Buffer.alloc(2);
 			eventHeader.writeUInt16LE(eventBuffer.length, 0);
 			
+			
+			if ( arguments.length < 2 ) {
+				data = _NO_DATA;
+			}
+			else
+			if ( this._serializer ) {
+				data = this._serializer(data);
+			}
+			
 			const dataBuffer = Buffer.from(data);
 			const dataHeader = Buffer.alloc(4);
 			dataHeader.writeUInt32LE(dataBuffer.length, 0);
-			
-			
 			_socket.write(Buffer.concat([Buffer.from([1]), eventHeader, eventBuffer, dataHeader, dataBuffer]));
 		}
 		connect(...args) {
@@ -134,11 +148,36 @@
 			messages.push({event, raw});
 		}
 	
+	
 		// Emit message
-		for (let msg of messages) {
-			this.emit( msg.event, { type:msg.event, sender:this, rawData:msg.raw });
-			if ( PRIVATES._parent ) {
-				PRIVATES._parent.emit( msg.event, { type:msg.event, sender:this, rawData:msg.raw });
+		if ( !this._deserializer ) {
+			for (let msg of messages) {
+				const EVT_ARGS = [
+					msg.event,
+					{ type:msg.event, sender:this, rawData:msg.raw }
+				];
+			
+				this.emit( ...EVT_ARGS );
+				if ( PRIVATES._parent ) {
+					PRIVATES._parent.emit( ...EVT_ARGS );
+				}
+			}
+		}
+		else {
+			for (let msg of messages) {
+				console.log(msg.event);
+				const EVT_ARGS = [
+					msg.event,
+					{ type:msg.event, sender:this, rawData:msg.raw }
+				];
+				
+				if ( msg.raw.length > 0 ) {
+					EVT_ARGS.push(this._deserializer(msg.raw));
+				}
+				this.emit( ...EVT_ARGS );
+				if ( PRIVATES._parent ) {
+					PRIVATES._parent.emit( ...EVT_ARGS );
+				}
 			}
 		}
 		

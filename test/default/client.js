@@ -6,7 +6,7 @@
 	"use strict";
 	
 	const crypto = require( 'crypto' );
-	const {NetEvtClient} = require( '../index' );
+	const {NetEvtClient} = require( '../../index' );
 	const clientInst = new NetEvtClient();
 	
 	clientInst
