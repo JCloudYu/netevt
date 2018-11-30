@@ -1,6 +1,6 @@
 {
 	"name": "netevt",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "A tiny bust fast library for tcp based network event system",
 	"main": "index.js",
 	"scripts": {
