@@ -11,7 +11,6 @@
 	
 	const _NO_DATA = new ArrayBuffer(0);
 	const _DATA_PROCESS_LOOP = 15;
-	const _DATA_TIMEOUT = UniqueTimeout();
 	const _WEAK_REL = new WeakMap();
 	class NetEvtSocket extends EventEmitter {
 		constructor(socket=null, serverInst=null) {
@@ -23,7 +22,8 @@
 				_socket: socket,
 				_connected: false,
 				_error: null,
-				_chunk: Buffer.alloc(0)
+				_chunk: Buffer.alloc(0),
+				_timeout: UniqueTimeout()
 			});
 			
 			socket
@@ -133,7 +133,7 @@
 	function ___HANDLE_DATA(chunk) {
 		const _PRIVATES = _WEAK_REL.get(this);
 		_PRIVATES._chunk = Buffer.concat([_PRIVATES._chunk, chunk]);
-		_DATA_TIMEOUT(___PROCESS_MESSAGE.bind(this), 0, _PRIVATES);
+		_PRIVATES._timeout(___PROCESS_MESSAGE.bind(this), 0, _PRIVATES);
 	}
 	function ___PROCESS_MESSAGE(PRIVATES) {
 		let repeat	 = _DATA_PROCESS_LOOP;
@@ -165,7 +165,6 @@
 		}
 		else {
 			for (let msg of messages) {
-				console.log(msg.event);
 				const EVT_ARGS = [
 					msg.event,
 					{ type:msg.event, sender:this, rawData:msg.raw }
@@ -183,7 +182,7 @@
 		
 		// Hook next processing loop if there's still remaining data
 		if ( PRIVATES._chunk.length > 0 && result ) {
-			_DATA_TIMEOUT(___PROCESS_MESSAGE.bind(this), 0, PRIVATES);
+			PRIVATES._timeout(___PROCESS_MESSAGE.bind(this), 0, PRIVATES);
 		}
 	}
 	function ___EAT_MESSAGE(chunk) {
