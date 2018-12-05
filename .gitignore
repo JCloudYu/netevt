@@ -5,4 +5,4 @@ Thumbs.db
 .vs_code
 
 node_modules
-package-clock.json
+package-lock.json
