@@ -1,6 +1,6 @@
 {
 	"name": "netevt",
-	"version": "0.2.3",
+	"version": "0.2.4",
 	"description": "A tiny bust fast library for tcp based network event system",
 	"main": "index.js",
 	"scripts": {
@@ -23,7 +23,7 @@
 	},
 	"homepage": "https://github.com/JCloudYu/netevt#readme",
 	"dependencies": {
-		"beson": "=0.9.14",
+		"beson": "^0.9.17",
 		"jsboost": "^0.3.2"
 	}
 }
