@@ -24,6 +24,6 @@
 	"homepage": "https://github.com/JCloudYu/netevt#readme",
 	"dependencies": {
 		"beson": "=0.9.14",
-		"jsboost": "^0.3.0"
+		"jsboost": "^0.3.2"
 	}
 }
