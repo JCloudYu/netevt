@@ -1,12 +1,14 @@
 {
 	"name": "netevt",
-	"version": "0.2.4",
+	"version": "0.9.0",
 	"description": "A tiny bust fast library for tcp based network event system",
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"test-server": "node ./test/server.js",
-		"test-client": "node ./test/client.js"
+		"test-server": "node ./test/default/server.js",
+		"test-client": "node ./test/default/client.js",
+		"test-serial-server": "node ./test/serializer/server.js",
+		"test-serial-client": "node ./test/serializer/client.js"
 	},
 	"repository": {
 		"type": "git",
@@ -22,8 +24,5 @@
 		"url": "https://github.com/JCloudYu/netevt/issues"
 	},
 	"homepage": "https://github.com/JCloudYu/netevt#readme",
-	"dependencies": {
-		"beson": "^0.9.17",
-		"jsboost": "^0.3.2"
-	}
+	"dependencies": {}
 }

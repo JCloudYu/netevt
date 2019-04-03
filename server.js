@@ -6,7 +6,7 @@
 	"use strict";
 	
 	const net = require( 'net' );
-	const {EventEmitter} = require( 'jsboost/native/event-emitter' );
+	const {EventEmitter} = require( 'events' );
 	const {NetEvtSocket} = require( './socket' );
 	
 	

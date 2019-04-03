@@ -6,11 +6,9 @@
 	"use strict";
 	
 	const {NetEvtServer} = require('../../index');
-	const beson = require( 'beson' );
-	
 	const ServerInst = new NetEvtServer();
-	ServerInst._serializer = (input)=>{return beson.Serialize(input);};
-	ServerInst._deserializer = (input)=>{return beson.Deserialize(input);};
+	ServerInst._serializer = (input)=>{return JSON.stringify(input);};
+	ServerInst._deserializer = (input)=>{return JSON.parse(input);};
 	
 	
 	
@@ -27,15 +25,15 @@
 	})
 	.on('data', (e, data)=>{
 		const {sender:client} = e;
-		let parsed = JSON.parse(data);
+		let parsed = data;
 		console.log(`Receiving data from client (${client.id})`);
 		console.log(parsed);
 		
-		e.sender.sendData(JSON.stringify({
+		e.sender.sendData({
 			a:"1", b:"2",
 			c:"3", d:"4",
 			e:"5", f:123456
-		}));
+		});
 	})
 	.on('client-event', (e, parsed)=>{
 		const {type, sender:client} = e;

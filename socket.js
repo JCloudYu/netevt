@@ -5,9 +5,8 @@
 (()=>{
 	"use strict";
 	
-	const {UniqueTimeout} = require( './_lib' );
 	const {Socket} = require( 'net' );
-	const {EventEmitter} = require( 'jsboost/native/event-emitter' );
+	const {EventEmitter} = require( 'events' );
 	
 	const _NO_DATA = new ArrayBuffer(0);
 	const _DATA_PROCESS_LOOP = 15;
@@ -102,13 +101,6 @@
 		_PRIVATES._connected = true;
 		
 		this.emit( 'connected', { type:'connected', sender:this });
-		
-		// The connect event won't fire in server's request socket, so the server-side connected event is handled in server directly
-		/*
-		if ( _PRIVATES._parent ) {
-			_PRIVATES._parent.emit( 'connected', {type:'connected', sender:this} );
-		}
-		*/
 	}
 	function ___HANDLE_CLOSE(withError) {
 		const _PRIVATES = _WEAK_REL.get(this);
@@ -253,5 +245,20 @@
 		anchor += contentLength;
 		
 		return {content, anchor};
+	}
+	
+	
+	
+	
+	function UniqueTimeout(){
+		let _active_timeout = null;
+
+		return (...args)=>{
+			if ( _active_timeout ) {
+				clearTimeout(_active_timeout);
+			}
+			
+			return _active_timeout = setTimeout(...args);
+		};
 	}
 })();
